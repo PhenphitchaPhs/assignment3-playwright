@@ -53,8 +53,10 @@ test('TC-COF-002: adding Espresso + Americano sums the total to $17.00', async (
 
   // Open the cart page and verify both items are listed
   await page.getByRole('link', { name: /cart/i }).click();
-  await expect(page.getByText('Espresso', { exact: true })).toBeVisible();
-  await expect(page.getByText('Americano', { exact: true })).toBeVisible();
+  // Each coffee name exists twice in the DOM: once in the visible cart list and
+  // once inside the hidden cart-preview popover -> keep only the visible one.
+  await expect(page.getByText('Espresso', { exact: true }).filter({ visible: true })).toBeVisible();
+  await expect(page.getByText('Americano', { exact: true }).filter({ visible: true })).toBeVisible();
   await expect(page.locator('[data-test="checkout"]')).toHaveText('Total: $17.00');
 
   await page.screenshot({ path: 'screenshots/coffee-tc002-02-cart-page.png', fullPage: true });
